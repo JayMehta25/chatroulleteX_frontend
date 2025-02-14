@@ -88,6 +88,7 @@ function Features() {
             margin-top: 20px;
             flex-direction: row;
             gap: 15px;
+            margin-right:40px;
           }
         }
 
@@ -244,7 +245,7 @@ function Features() {
       <nav className="navbar">
         <div className="navbar-title">ChatRouletteX</div>
         <div className="navbar-links">
-          <button className="nav-button" onClick={() => navigate("/")}>Home</button>
+          <button className="nav-button" onClick={() => navigate("/homepage")}>Home</button>
           <button className="nav-button" onClick={() => navigate("/features")}>Features</button>
           <button className="nav-button" onClick={() => navigate("/about")}>About</button>
           <button className="nav-button" onClick={() => navigate("/chat")}>Chat Now</button>

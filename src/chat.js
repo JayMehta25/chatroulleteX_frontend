@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
 // Connect to the backend using your ngrok URL
-const socket = io("https://backend-production-4c02.up.railway.app/", {
+const socket = io("chatroulletexbackend-production.up.railway.app", {
   transports: ["websocket"],
   withCredentials: true,
 });
