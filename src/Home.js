@@ -74,28 +74,33 @@ function ChatBot() {
     const currentInput = input;
     setInput("");
     setIsTyping(true);
-
+  
     try {
+      // Change to your local server URL
       const response = await fetch(
-        "https://chatroulletexbackend-production.up.railway.app/api/chatbot",
+        "http://localhost:5000/api/chatbot", // Updated to local server
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: currentInput })
+          body: JSON.stringify({ message: currentInput }),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+  
+      // Log the response to ensure correct data is received
+      console.log("ChatBot response:", data);
+  
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "ChatBot is thinking..." }
+        { sender: "bot", text: "ChatBot is thinking..." },
       ]);
       setTimeout(() => {
-        setMessages((prev) => prev.slice(0, prev.length - 1));
-        typeOutBotMessage(data.reply);
+        setMessages((prev) => prev.slice(0, prev.length - 1)); // Remove the thinking message
+        typeOutBotMessage(data.reply); // Update with the actual bot's reply
       }, 1000);
     } catch (error) {
       console.error("Error fetching chatbot response:", error);
@@ -103,18 +108,19 @@ function ChatBot() {
         ...prev,
         {
           sender: "bot",
-          text: "Sorry, an error occurred while processing your request."
-        }
+          text: "Sorry, an error occurred while processing your request.",
+        },
       ]);
       setIsTyping(false);
     }
   };
-
+  
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSend();
     }
   };
+  
 
   return (
     <>

@@ -1,7 +1,7 @@
 // socket.js
 import { io } from "socket.io-client";
 
-const socket = io("chatroulletexbackend-production.up.railway.app", {
+const socket = io("http://localhost:5000", {
   transports: ["websocket"],
   withCredentials: true,
 });

@@ -25,7 +25,6 @@ const LoginPage = () => {
 
   const closeToast = () => setToast(null);
 
-
   // Auto-dismiss toast after 3 seconds
   useEffect(() => {
     if (toast) {
@@ -257,12 +256,18 @@ const LoginPage = () => {
         /* Typewriter text style */
         .typewriter-text {
           color: #fff;
-          font-size: 3rem;
+          font-size: 2.5rem;
           font-weight: 700;
           text-shadow: 0 0 20px rgba(255,255,255,0.6);
           font-family: 'Poppins', sans-serif;
-          overflow: hidden;
-          white-space: nowrap;
+          text-align: center;
+          /* Let it wrap if it's too long for smaller screens */
+          max-width: 90vw;
+          margin: 0 auto;
+          white-space: normal;
+          overflow-wrap: break-word;
+
+          /* Blinking cursor while typing */
           border-right: 4px solid #fff;
           animation: blinkCursor 0.8s steps(1) infinite;
         }
@@ -271,6 +276,25 @@ const LoginPage = () => {
           0% { border-color: transparent; }
           50% { border-color: #fff; }
           100% { border-color: transparent; }
+        }
+
+        /* Once typing is finished, apply a moving gradient once */
+        .finished-typing {
+          border-right: none; /* remove cursor */
+          background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+          background-size: 300%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: gradientMove 2s linear forwards;
+        }
+
+        @keyframes gradientMove {
+          0% {
+            background-position: 0% 50%;
+          }
+          100% {
+            background-position: 100% 50%;
+          }
         }
       `}</style>
 
@@ -304,22 +328,31 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button className="login-button" onClick={() => {
-              if (username.trim() === "" || password.trim() === "") {
-                setToast({ message: "⚠️ Please enter your username and password!", type: "error" });
-                setTimeout(closeToast, 3000);
-              } else {
-                setToast({ message: `Welcome to ChatRouletteX, ${username}!`, type: "success" });
-                setTimeout(() => {
-                  closeToast();
-                  setFadeOutLogin(true);
-                  // Show overlay after 1s fade-out
+            <button
+              className="login-button"
+              onClick={() => {
+                if (username.trim() === "" || password.trim() === "") {
+                  setToast({
+                    message: "⚠️ Please enter your username and password!",
+                    type: "error",
+                  });
+                  setTimeout(closeToast, 3000);
+                } else {
+                  setToast({
+                    message: `Welcome to ChatRouletteX, ${username}!`,
+                    type: "success",
+                  });
                   setTimeout(() => {
-                    setShowOverlay(true);
-                  }, 1000);
-                }, 3000);
-              }
-            }}>
+                    closeToast();
+                    setFadeOutLogin(true);
+                    // Show overlay after 1s fade-out
+                    setTimeout(() => {
+                      setShowOverlay(true);
+                    }, 1000);
+                  }, 3000);
+                }
+              }}
+            >
               Login
             </button>
           </div>
@@ -331,7 +364,13 @@ const LoginPage = () => {
         {/* Typewriter Overlay */}
         {showOverlay && (
           <div className={`typewriter-overlay ${fadeOutOverlay ? "fade-out-overlay" : ""}`}>
-            <div className="typewriter-text">{typedText}</div>
+            <div
+              className={`typewriter-text ${
+                typedIndex >= finalMessage.length ? "finished-typing" : ""
+              }`}
+            >
+              {typedText}
+            </div>
           </div>
         )}
       </div>
