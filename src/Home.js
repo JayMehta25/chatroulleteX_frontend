@@ -78,7 +78,7 @@ function ChatBot() {
     try {
       // Change to your local server URL
       const response = await fetch(
-        "http://localhost:5000/api/chatbot", // Updated to local server
+        "https://chatroulletexbackend-production-adb8.up.railway.app/api/chatbot", // Updated to local server
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

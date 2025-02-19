@@ -134,7 +134,7 @@ function ChatMain() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("http://localhost:5000/upload", {
+    const response = await fetch("https://chatroulletexbackend-production-adb8.up.railway.app/upload", {
       method: "POST",
       body: formData,
     });
