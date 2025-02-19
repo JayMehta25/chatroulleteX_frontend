@@ -1,11 +1,15 @@
+// Homepage.js
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import OrbBackground from "./OrbBackground"; // Ensure the path is correct
+import "bootstrap/dist/css/bootstrap.min.css";
 
-// Typewriter title component remains unchanged
+// ---------- Typewriter Title Component ----------
 function TypewriterTitle() {
   const [text, setText] = useState("");
   const fullText = "ChatRouletteX";
   const [index, setIndex] = useState(0);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     if (index < fullText.length) {
@@ -25,7 +29,7 @@ function TypewriterTitle() {
   );
 }
 
-// ChatBot component with dynamic API responses and typewriter effect for bot replies with thinking delay
+// ---------- ChatBot Component ----------
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -39,23 +43,19 @@ function ChatBot() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Scroll to the bottom when new messages appear or when typing indicator shows
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Function to type out the bot response letter by letter
   const typeOutBotMessage = (fullText) => {
     let index = 0;
     let botReply = "";
-    // First, add an empty bot message to start typing
     setMessages((prev) => [...prev, { sender: "bot", text: "" }]);
     const interval = setInterval(() => {
       if (index < fullText.length) {
         botReply += fullText[index];
         setMessages((prev) => {
           const newMessages = [...prev];
-          // Replace the last message with the updated text
           newMessages[newMessages.length - 1] = { sender: "bot", text: botReply };
           return newMessages;
         });
@@ -64,39 +64,48 @@ function ChatBot() {
         clearInterval(interval);
         setIsTyping(false);
       }
-    }, 50); // Adjust typing speed here (ms per letter)
+    }, 50);
   };
 
-  // Function to handle sending messages
   const handleSend = async () => {
-    if (isTyping || input.trim() === "") return; // Guard clause
+    if (isTyping || input.trim() === "") return;
     const userMessage = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
-    const currentInput = input; // capture input before clearing it
+    const currentInput = input;
     setInput("");
     setIsTyping(true);
 
     try {
-      const response = await fetch("https://chatroulletexbackend-production.up.railway.app/api/chatbot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: currentInput })
-      });
+      const response = await fetch(
+        "https://chatroulletexbackend-production.up.railway.app/api/chatbot",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: currentInput })
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      // First, add a "thinking" message in the same bot slot
-      setMessages((prev) => [...prev, { sender: "bot", text: "ChatBot is thinking..." }]);
-      // After a 1-second delay, remove the thinking message and start typewriter effect
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "ChatBot is thinking..." }
+      ]);
       setTimeout(() => {
-        setMessages((prev) => prev.slice(0, prev.length - 1)); // Remove the thinking message
+        setMessages((prev) => prev.slice(0, prev.length - 1));
         typeOutBotMessage(data.reply);
       }, 1000);
     } catch (error) {
       console.error("Error fetching chatbot response:", error);
-      setMessages((prev) => [...prev, { sender: "bot", text: "Sorry, an error occurred while processing your request." }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: "Sorry, an error occurred while processing your request."
+        }
+      ]);
       setIsTyping(false);
     }
   };
@@ -156,11 +165,9 @@ function ChatBot() {
           </div>
         </div>
       )}
-      {/* ChatBot Toggle Button */}
       <button className="chatbot-toggle" onClick={() => setIsOpen(!isOpen)}>
         💬
       </button>
-      {/* Comic Prompt Bubble (shown when chat is closed) */}
       {!isOpen && (
         <div className="chatbot-prompt">
           Need any help? I can do it for you now!
@@ -170,10 +177,35 @@ function ChatBot() {
   );
 }
 
-// Main Homepage component including the navigation, main UI, and ChatBot
-function Homepage() {
+// ---------- Main Homepage Component ----------
+export default function Homepage() {
   const navigate = useNavigate();
+  const [scrollY, setScrollY] = useState(0);
 
+  // Update scrollY for dynamic styling
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Dynamic title style (moves from center to top)
+  const titleStyle = {
+    position: "fixed",
+    top: scrollY > 100 ? "10%" : "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    transition: "all 0.5s ease",
+    color: "#fff",
+    fontSize: "3rem",
+    fontWeight: "bold",
+    textShadow: "0 0 10px rgba(255,255,255,0.5)",
+    zIndex: 2
+  };
+
+  // Functionalities info style with moving gradient text
+
+  // Logout handler for navigation bar
   const handleLogout = () => {
     localStorage.removeItem("username");
     navigate("/");
@@ -181,8 +213,36 @@ function Homepage() {
 
   return (
     <>
+      {/* Global and Component Styles */}
       <style>
         {`
+          /* Keyframes for background and gradient animations */
+          @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          @keyframes bgAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+          }
+          @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+          @keyframes gradientShift {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+          }
+          @keyframes floatUpDown {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+          }
+          @keyframes promptSlide {
+            0% { transform: translateX(0); opacity: 1; }
+            50% { transform: translateX(10px); opacity: 0.8; }
+            100% { transform: translateX(0); opacity: 1; }
+          }
+
           /* Global Styles */
           body {
             margin: 0;
@@ -196,7 +256,6 @@ function Homepage() {
             background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             display: flex;
-            flex-direction: row;
             align-items: center;
             padding: 10px 20px;
             justify-content: space-between;
@@ -208,26 +267,21 @@ function Homepage() {
           .navbar-title {
             font-size: 2rem;
             font-weight: bold;
-            background: linear-gradient(45deg, rgb(255, 255, 255), rgb(162, 21, 194));
+            background: linear-gradient(45deg, #fff, rgb(0, 187, 255));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-right: 20px;
             overflow: hidden;
             white-space: nowrap;
           }
-          /* Cursor animation for typewriter effect */
           .cursor {
             display: inline-block;
             width: 3px;
             height: 1.2em;
-            background: rgb(162, 21, 194);
+            background:rgb(255, 255, 255);
             margin-left: 2px;
             animation: blink 1s infinite;
             vertical-align: middle;
-          }
-          @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
           }
           .navbar-links {
             display: flex;
@@ -238,7 +292,7 @@ function Homepage() {
             font-size: 0.9rem;
             border: none;
             border-radius: 5px;
-            background: linear-gradient(90deg, #fff, #000, #fff);
+            background: linear-gradient(60deg, #000, #87ceeb, #000);
             background-size: 200% auto;
             color: #fff;
             cursor: pointer;
@@ -250,11 +304,6 @@ function Homepage() {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           }
-          @keyframes gradientShift {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-          }
-          /* Logout Button */
           .logout-button {
             padding: 6px 12px;
             font-size: 0.9rem;
@@ -271,20 +320,20 @@ function Homepage() {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           }
-          /* Responsive Navigation for Mobile */
           @media (max-width: 600px) {
             .navbar {
               flex-direction: column;
               align-items: center;
             }
             .navbar-links {
-              margin-top: 20px;
-              flex-direction: row;
-              gap: 15px;
-              margin-right: 40px;
+              flex-wrap: wrap;
+              margin-top: 10px;
+              gap: 5px;
+              text-align: center;
+              overflow-x: auto;
             }
           }
-          /* Homepage Container */
+          /* Homepage Content Styles */
           .homepage-container {
             position: relative;
             min-height: 100vh;
@@ -295,28 +344,8 @@ function Homepage() {
             justify-content: center;
             text-align: center;
             color: #fff;
-            overflow: hidden;
-            z-index: 1;
-            background: linear-gradient(270deg, #000, #fff, #000);
-            background-size: 400% 400%;
-            animation: bgGradient 10s ease infinite;
+            z-index: 2;
           }
-          .homepage-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 0;
-          }
-          @keyframes bgGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          /* Animated Chat Bubble */
           .chat-bubble {
             background: rgba(255, 255, 255, 0.15);
             padding: 15px 25px;
@@ -325,16 +354,11 @@ function Homepage() {
             display: inline-block;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: float 2s infinite alternate ease-in-out;
+            animation: floatUpDown 2s infinite alternate ease-in-out;
             margin-bottom: 20px;
           }
-          @keyframes float {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(10px); }
-          }
-          /* Hero Content Box */
           .homepage-box {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.2);
             padding: 30px 40px;
             border-radius: 15px;
             backdrop-filter: blur(8px);
@@ -353,7 +377,7 @@ function Homepage() {
             font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 15px;
-            background: linear-gradient(45deg, rgb(245, 245, 245), rgb(164, 0, 205));
+            background: linear-gradient(45deg, #f5f5f5, rgb(0, 132, 255));
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -392,45 +416,27 @@ function Homepage() {
               margin: 10px 0;
             }
           }
-          /* Features Section */
-          .features-section {
+          /* Contact Section Styles */
+          .contact-section {
             background: rgba(0, 0, 0, 0.8);
             padding: 40px 20px;
             margin-top: 40px;
             width: 100%;
           }
-          .features-title {
+          .contact-title {
             font-size: 2rem;
             margin-bottom: 20px;
             color: #c0c0c0;
           }
-          .features-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+          .contact-details {
+            font-size: 1.1rem;
+            color: #ddd;
           }
-          .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            width: 260px;
-            text-align: center;
-            transition: transform 0.3s ease, filter 0.3s ease;
+          .contact-details a {
+            color: #87ceeb;
+            text-decoration: none;
           }
-          .feature-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            filter: brightness(1.3);
-          }
-          .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-          }
-          .feature-description {
-            font-size: 1rem;
-          }
-          /* Footer */
+          /* Footer Styles */
           .footer {
             margin-top: 50px;
             padding: 20px;
@@ -439,27 +445,29 @@ function Homepage() {
             text-align: center;
           }
           /* ChatBot Styles */
-          @keyframes floatUpDown {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
-          }
           .chatbot-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(45deg, #3a3a3a, #2c3e50);
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1100;
-            animation: floatUpDown 2s ease-in-out infinite;
-          }
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: linear-gradient(45deg, #ff1493, #00b7ff, #ff1493); /* Pink to blue gradient */
+          background-size: 400% 400%;
+          color: #fff;
+          border: none;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 1100;
+          animation: floatUpDown 2s ease-in-out infinite, shine 1.5s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
           .chatbot-window {
             position: fixed;
             bottom: 90px;
@@ -545,7 +553,6 @@ function Homepage() {
             font-style: italic;
             color: #bbb;
           }
-          /* Comic Prompt Bubble */
           .chatbot-prompt {
             position: fixed;
             bottom: 90px;
@@ -559,15 +566,10 @@ function Homepage() {
             animation: promptSlide 3s ease-in-out infinite;
             z-index: 1100;
           }
-          @keyframes promptSlide {
-            0% { transform: translateX(0); opacity: 1; }
-            50% { transform: translateX(10px); opacity: 0.8; }
-            100% { transform: translateX(0); opacity: 1; }
-          }
         `}
       </style>
 
-      {/* Navigation Bar */}
+      {/* ---------- Navigation Bar ---------- */}
       <nav className="navbar">
         <div className="navbar-left">
           <TypewriterTitle />
@@ -585,89 +587,80 @@ function Homepage() {
           <button className="nav-button" onClick={() => navigate("/about")}>
             About
           </button>
-          <button className="nav-button" onClick={() => navigate("/chat")}>
+          <button className="nav-button" onClick={() => navigate("/ChatLanding")}>
             Chat Now
           </button>
         </div>
       </nav>
 
-      {/* Main Homepage Container */}
-      <div className="homepage-container">
-        {/* Animated Chat Bubble */}
-        <div className="chat-bubble">
-          💬 Meet new people, chat privately, and build real connections!
-        </div>
+      {/* ---------- Animated Background Container ---------- */}
+      <div
+        style={{
+          width: "100vw",
+          minHeight: "0vh",
+          position: "relative",
+          overflow: "hidden",
+          background: "linear-gradient(45deg, skyblue, black)",
+          backgroundSize: "400% 400%",
+          animation: "bgAnimation 10s ease infinite"
+        }}
+      >
+        {/* Orb Background Component */}
+        <OrbBackground />
 
-        {/* Hero Content Box */}
-        <div className="homepage-box">
-          <h1 className="homepage-title">Chat with Team Privately</h1>
-          <p className="homepage-subtitle">
-            Create or join private chat rooms and connect instantly. No sign-up required!
-          </p>
-          <button className="homepage-button" onClick={() => navigate("/chat")}>
-            Start Chatting 🚀
-          </button>
-          <button className="homepage-button" onClick={() => navigate("/chat")}>
-            Create Room 🔑
-          </button>
-          <button className="homepage-button" onClick={() => navigate("/chat")}>
-            Join Room 👥
-          </button>
-        </div>
+        {/* Dynamic Title */}
+        <div style={titleStyle}>ChatRouletteX</div>
 
-        {/* Features Section */}
-        <div className="features-section">
-          <h2 className="features-title">Amazing Features</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">💬</div>
-              <div className="feature-description">
-                Real-time private messaging with seamless room creation.
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🎙️</div>
-              <div className="feature-description">
-                Voice messaging and audio recording support for a richer chat experience.
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">😊</div>
-              <div className="feature-description">
-                Fun animated reactions and emojis to express yourself.
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🔒</div>
-              <div className="feature-description">
-                Private chat rooms ensuring your conversations remain secure.
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🎨</div>
-              <div className="feature-description">
-                Customizable themes to match your style and mood.
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🚀</div>
-              <div className="feature-description">
-                Fast, lightweight, and optimized for mobile and desktop.
-              </div>
-            </div>
+
+        {/* ---------- Homepage Content ---------- */}
+        <div className="homepage-container">
+          <div className="chat-bubble">
+            💬 Meet new people, chat privately, and build real connections!
           </div>
-        </div>
+          <div className="homepage-box">
+            <h1 className="homepage-title">Chat with Team Privately</h1>
+            <p className="homepage-subtitle">
+              Create or join private chat rooms and connect instantly. No sign-up required!
+            </p>
+            <button className="homepage-button" onClick={() => navigate("/chat")}>
+              Start Chatting 🚀
+            </button>
+            <button className="homepage-button" onClick={() => navigate("/chat")}>
+              Create Room 🔑
+            </button>
+            <button className="homepage-button" onClick={() => navigate("/chat")}>
+              Join Room 👥
+            </button>
+          </div>
 
-        {/* Footer */}
-        <div className="footer">
-          &copy; {new Date().getFullYear()} ChatRouletteX. All rights reserved.
+          {/* ---------- Contact Section ---------- */}
+          <div className="contact-section">
+            <h2 className="contact-title">Contact Us</h2>
+            <p className="contact-details">
+              Have any questions or need support? Reach out to us at{" "}
+              <a href="mailto:support@chatroulletex.com">support@chatroulletex.com</a>.
+            </p>
+            <p className="contact-details">
+              Follow us on social media:{" "}
+              <a href="https://twitter.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                Twitter
+              </a>{" "}
+              |{" "}
+              <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                Facebook
+              </a>
+            </p>
+          </div>
+
+          {/* Footer (always visible) */}
+          <div className="footer">
+            &copy; {new Date().getFullYear()} ChatRouletteX. All rights reserved.
+          </div>
         </div>
       </div>
 
-      {/* ChatBot Component */}
+      {/* ---------- ChatBot Component ---------- */}
       <ChatBot />
     </>
   );
 }
-
-export default Homepage;

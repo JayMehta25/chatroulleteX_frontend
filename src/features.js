@@ -85,11 +85,15 @@ function Features() {
             align-items: center;
           }
           .navbar-links {
-            margin-top: 20px;
-            flex-direction: row;
-            gap: 15px;
-            margin-right:40px;
-          }
+              display: flex;            /* Use flex to line them up horizontally */
+              flex-wrap: wrap;          /* Allows wrapping on small screens if needed */
+              margin-top: 10px;
+              margin-left:16px;
+              margin-right: 10px;
+              gap: 5px; 
+              text-align:center;  
+              overflow-x:auto;             /* Space between buttons */
+            }
         }
 
         /* Features Page Container with animated white–black gradient background */
@@ -245,7 +249,7 @@ function Features() {
       <nav className="navbar">
         <div className="navbar-title">ChatRouletteX</div>
         <div className="navbar-links">
-          <button className="nav-button" onClick={() => navigate("/homepage")}>Home</button>
+          <button className="nav-button" onClick={() => navigate("/Home")}>Home</button>
           <button className="nav-button" onClick={() => navigate("/features")}>Features</button>
           <button className="nav-button" onClick={() => navigate("/about")}>About</button>
           <button className="nav-button" onClick={() => navigate("/chat")}>Chat Now</button>

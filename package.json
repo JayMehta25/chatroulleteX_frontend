@@ -3,15 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
+    "framer-motion": "^12.4.3",
     "mongoose": "^8.10.0",
+    "ogl": "^1.0.11",
     "openai": "^4.85.1",
+    "postprocessing": "^6.36.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.8.1",
+    "three": "^0.173.0",
+    "waveform.js": "^1.0.0",
+    "wavesurfer.js": "^7.9.1",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
@@ -37,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
