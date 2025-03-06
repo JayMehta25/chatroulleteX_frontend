@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import socket from "./socket"; // import the shared socket
 import "bootstrap/dist/css/bootstrap.min.css";
 import Particles from './particlepage'; // Import the Particles component
+import Swal from 'sweetalert2';
 
 function ChatLanding() {
   const [username, setUsername] = useState("");
@@ -12,11 +13,37 @@ function ChatLanding() {
   const createRoom = () => {
     if (username.trim()) {
       socket.emit("createRoom", username, (response) => {
+        Swal.close();
+        
         if (response && response.error) {
-          console.error(response.error);
+          console.error("Room creation error:", response.error);
+          Swal.fire({
+            title: 'Error',
+            text: response.error,
+            icon: 'error'
+          });
           return;
         }
-        navigate("/ChatMain", { state: { username, roomCode: response } });
+        
+        // Store the room code
+        localStorage.setItem('currentRoomCode', response);
+        console.log("Room created successfully, code:", response);
+        
+        // FIX: Use lowercase 'chatmain' to match route definition
+        try {
+          console.log("Navigating to chatmain with:", { username, roomCode: response });
+          navigate("/chatmain", { 
+            state: { username, roomCode: response },
+            replace: true
+          });
+        } catch (error) {
+          console.error("Navigation error:", error);
+          Swal.fire({
+            title: 'Navigation Error',
+            text: 'Could not navigate to chat room. Please try again.',
+            icon: 'error'
+          });
+        }
       });
     }
   };
@@ -28,7 +55,11 @@ function ChatLanding() {
           console.error(response.error);
           return;
         }
-        navigate("/ChatMain", { state: { username, roomCode } });
+        // FIX: Use lowercase 'chatmain' to match route definition
+        navigate("/chatmain", { 
+          state: { username, roomCode },
+          replace: true
+        });
       });
     }
   };

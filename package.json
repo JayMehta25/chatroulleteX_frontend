@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
@@ -16,6 +17,7 @@
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.8.1",
+    "sweetalert2": "^11.17.2",
     "three": "^0.173.0",
     "waveform.js": "^1.0.0",
     "wavesurfer.js": "^7.9.1",
