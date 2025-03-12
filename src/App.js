@@ -12,7 +12,7 @@ import Login from "./Login";
 import Tutorial from './TutorialPage';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
-
+import { Analytics } from "@vercel/analytics/react"
 function App() {
   return (
     <Router>
@@ -37,7 +37,7 @@ function App() {
         <Route path="/about" element={<ParticlesPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        
+        <Analytics />
       </Routes>
     </Router>
   );
