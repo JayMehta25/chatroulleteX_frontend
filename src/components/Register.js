@@ -14,7 +14,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  const API_URL = 'http://localhost:5000'; // Make sure this matches your backend
+  const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app'; // Make sure this matches your backend
 
   // Validate form before submission
   const validateForm = () => {
@@ -61,7 +61,7 @@ function Register() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API_URL}/register`, { 
+      const response = await axios.post(`https://chatroulletexbackend-production-adb8.up.railway.app/register`, { 
         username, 
         email, 
         password 

@@ -10,7 +10,7 @@ function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const { token } = useParams(); // Extract token from URL
   const navigate = useNavigate();
-  const API_URL = 'http://localhost:5000';
+  const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

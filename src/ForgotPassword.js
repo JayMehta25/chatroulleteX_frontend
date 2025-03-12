@@ -9,7 +9,7 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   
-  const API_URL = 'http://localhost:5000';
+  const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app';
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +27,7 @@ function ForgotPassword() {
     setMessage('');
     
     try {
-      const response = await axios.post(`${API_URL}/forgot-password`, { email });
+      const response = await axios.post(`${API_URL}/api/forgot-password`, { email });
       
       Swal.fire({
         title: 'Success',
@@ -78,6 +78,7 @@ function ForgotPassword() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your registered email"
                     required
+                    style={{ backgroundColor: 'black', color: 'white' }}
                   />
                 </div>
                 

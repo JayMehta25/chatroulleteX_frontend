@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import socket from "./socket"; // import the shared socket
 import "bootstrap/dist/css/bootstrap.min.css";
 import Particles from './particlepage'; // Import the Particles component
@@ -9,6 +9,7 @@ function ChatLanding() {
   const [username, setUsername] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const navigate = useNavigate();
+  const { roomCode: urlRoomCode } = useParams();
 
   const createRoom = () => {
     if (username.trim()) {
@@ -32,7 +33,7 @@ function ChatLanding() {
         // FIX: Use lowercase 'chatmain' to match route definition
         try {
           console.log("Navigating to chatmain with:", { username, roomCode: response });
-          navigate("/chatmain", { 
+          navigate("/ChatMain", { 
             state: { username, roomCode: response },
             replace: true
           });
@@ -56,7 +57,7 @@ function ChatLanding() {
           return;
         }
         // FIX: Use lowercase 'chatmain' to match route definition
-        navigate("/chatmain", { 
+        navigate("/ChatMain", { 
           state: { username, roomCode },
           replace: true
         });

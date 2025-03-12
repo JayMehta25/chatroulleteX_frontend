@@ -25,7 +25,6 @@ function App() {
         
         {/* Protected routes */}
         <Route path="/tutorial" element={<Tutorial />} />
-        <Route path="/chat" element={<ChatMain />} />
         
         
         
@@ -34,10 +33,11 @@ function App() {
         <Route path="/TutorialPage" element={<TutorialPage />} />
         <Route path="/features" element={<Features />} />
         <Route path="/ChatLanding" element={<ChatLanding />} />
-        <Route path="/chatmain" element={<ChatMain />} />
+        <Route path="/ChatMain" element={<ChatMain />} />
         <Route path="/about" element={<ParticlesPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        
       </Routes>
     </Router>
   );

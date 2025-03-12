@@ -76,15 +76,11 @@ function ChatBot() {
     setIsTyping(true);
   
     try {
-      // Change to your local server URL
-      const response = await fetch(
-        "https://chatroulletexbackend-production-adb8.up.railway.app/api/chatbot", // Updated to local server
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: currentInput }),
-        }
-      );
+      const response = await fetch("https://chatroulletexbackend-production-adb8.up.railway.app/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: currentInput }),
+      });
   
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -253,6 +249,7 @@ export default function Homepage() {
           body {
             margin: 0;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow-y: auto;
           }
           /* Navigation Bar */
           .navbar {

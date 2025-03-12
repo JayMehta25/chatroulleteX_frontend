@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import './EmailVerification.css';
 
 // Add this near the top of the component, after the state declarations
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app';
 
 function EmailVerification() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -181,72 +181,29 @@ function EmailVerification() {
   // Get combined OTP value
   const getOtpValue = () => otp.join('');
 
-  const handleVerifyOTP = async (e) => {
-    e.preventDefault();
-    
-    // Check if otp is an array (from multiple input boxes)
-    if (Array.isArray(otp)) {
-      // Convert array to string and check if it's empty
-      const otpString = otp.join('');
-      if (!otpString) {
-        setError('Please enter the verification code');
-        return;
-      }
-    } else if (!otp || (typeof otp === 'string' && !otp.trim())) {
-      // Check if otp is empty string
-      setError('Please enter the verification code');
-      return;
-    }
-    
+  const handleVerifyOTP = async () => {
     try {
-      setLoading(true);
-      setError('');
-      
-      console.log('Verifying OTP -', 'Email:', email, 'OTP:', otp);
-      
-      // Log the request details
-      console.log('POST request to:', `${API_URL}/verify-otp`);
-      
-      // Prepare OTP value - handle both array and string formats
-      const otpValue = Array.isArray(otp) ? otp.join('') : otp;
-      console.log('Request payload:', { email, otp: otpValue });
-      
-      const response = await axios.post(`${API_URL}/verify-otp`, {
-        email,
-        otp: otpValue
-      });
-      
-      console.log('Verification response:', response.data);
-      
-      // Store auth data if successful
-      if (response.data.token) {
+        const response = await axios.post(`${API_URL}/verify-otp`, {
+            email: email,
+            otp: getOtpValue()
+        });
+
+        // Handle successful verification
+        console.log('OTP verified successfully:', response.data);
+        // Redirect or show success message
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.username);
         localStorage.removeItem('verificationEmail'); // Clean up
-        
-        // Redirect to chat landing
         navigate('/TutorialPage');
-      } else {
-        setError('Verification successful, but no token received');
-      }
-      
     } catch (error) {
-      console.error('OTP verification error:', error);
-      
-      // Log detailed error information
-      if (error.response) {
-        console.log('Error status:', error.response.status);
-        console.log('Error data:', error.response.data);
-        setError(error.response.data.message || 'Invalid verification code');
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-        setError('Server not responding. Please try again later.');
-      } else {
-        console.log('Error message:', error.message);
-        setError('Verification failed. Please try again.');
-      }
-    } finally {
-      setLoading(false);
+        console.error('OTP verification error:', error);
+        // Handle error response
+        const errorMsg = error.response?.data?.message || 'Failed to verify OTP';
+        Swal.fire({
+            title: 'Error',
+            text: errorMsg,
+            icon: 'error'
+        });
     }
   };
 

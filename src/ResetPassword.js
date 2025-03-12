@@ -13,7 +13,7 @@ function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
   
-  const API_URL = 'http://localhost:5000';
+  const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app';
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ function ResetPassword() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API_URL}/reset-password/${token}`, { 
+      const response = await axios.post(`${API_URL}/api/reset-password/${token}`, { 
         password 
       });
       
@@ -90,6 +90,7 @@ function ResetPassword() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter new password"
                     required
+                    style={{ backgroundColor: 'black', color: 'white' }}
                   />
                 </div>
                 
@@ -103,6 +104,7 @@ function ResetPassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
                     required
+                    style={{ backgroundColor: 'black', color: 'white' }}
                   />
                 </div>
                 

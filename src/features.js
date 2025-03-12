@@ -30,6 +30,7 @@ function Features() {
         body {
           margin: 0;
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          overflow-y: auto;
         }
 
         /* Navigation Bar */

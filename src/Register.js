@@ -43,6 +43,12 @@ function Register() {
       return;
     }
     
+    const userData = {
+      username,
+      email,
+      password
+    };
+
     try {
       Swal.fire({
         title: 'Creating Account',
@@ -55,11 +61,7 @@ function Register() {
         }
       });
       
-      const response = await axios.post('http://localhost:5000/register', {
-        username,
-        email,
-        password
-      });
+      const response = await axios.post('https://chatroulletexbackend-production-adb8.up.railway.app/register', userData);
       
       Swal.close();
       
@@ -81,9 +83,10 @@ function Register() {
     } catch (error) {
       Swal.close();
       
+      const errorMsg = error.response?.data?.message || 'Registration failed';
       Swal.fire({
-        title: 'Registration Failed',
-        text: error.response?.data?.message || "Registration failed. Please try again.",
+        title: 'Error',
+        text: errorMsg,
         icon: 'error'
       });
     }

@@ -58,6 +58,7 @@ function ChatMain() {
   const waveSurferRefs = useRef([]);
   const localWaveformRef = useRef(null);
   const localWaveSurferRef = useRef(null);
+  const messagesEndRef = useRef(null); // Create a ref for the end of the messages
 
   // Double tap handler for likes
   const handleDoubleTap = (index) => {
@@ -179,7 +180,7 @@ function ChatMain() {
     formData.append("file", file);
     
     try {
-      const response = await fetch("http://localhost:5000/upload", {
+      const response = await fetch("https://chatroulletexbackend-production-adb8.up.railway.app/upload", {
         method: "POST",
         body: formData,
       });
@@ -304,6 +305,35 @@ function ChatMain() {
   const cancelPreview = () => {
     setPreviewBackground(null);
   };
+
+  const createRoom = () => {
+    if (username.trim()) {
+      console.log("Creating room for username:", username);
+      socket.emit("createRoom", username, (response) => {
+        // Handle response...
+      });
+    } else {
+      console.error("Username is required to create a room");
+    }
+  };
+
+  const joinRoom = () => {
+    if (roomCode.trim() && username.trim()) {
+      console.log("Joining room:", roomCode, "for user:", username);
+      socket.emit("joinRoom", { roomCode, username }, (response) => {
+        // Handle response...
+      });
+    } else {
+      console.error("Room code and username are required to join a room");
+    }
+  };
+
+  // Scroll to the bottom of the messages when a new message is received
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]); // This effect runs whenever messages change
 
   return (
     <div
@@ -462,6 +492,9 @@ function ChatMain() {
             </div>
           );
         })}
+
+        {/* This div will act as the scroll target */}
+        <div ref={messagesEndRef} />
       </main>
 
       <footer

@@ -44,7 +44,7 @@ function Login() {
         }
       });
       
-      const response = await axios.post('http://localhost:5000/login', {
+      const response = await axios.post('https://chatroulletexbackend-production-adb8.up.railway.app/login', {
         email,
         password
       });
@@ -56,9 +56,14 @@ function Login() {
       
       if (!response.data.isVerified) {
         // User exists but needs verification
+        // Send OTP to the user's email
+        await axios.post('https://chatroulletexbackend-production-adb8.up.railway.app/send-verification-otp', {
+          email
+        });
+
         Swal.fire({
           title: 'Account Found!',
-          text: 'Your account needs verification. Redirecting to verification page...',
+          text: 'Your account needs verification. An OTP has been sent to your email. Redirecting to verification page...',
           icon: 'info',
           timer: 2000,
           showConfirmButton: false
@@ -87,7 +92,21 @@ function Login() {
     } catch (error) {
       Swal.close();
       
-      if (error.response && error.response.status === 404) {
+      if (error.response && error.response.status === 403) {
+        // User is not verified
+        Swal.fire({
+          title: 'Account Not Verified',
+          text: 'Please verify your email before logging in. Click here to verify your account.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Verify Account',
+          cancelButtonText: 'Try Again'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate('/verify-email'); // Redirect to email verification page
+          }
+        });
+      } else if (error.response && error.response.status === 404) {
         // User doesn't exist
         Swal.fire({
           title: 'Account Not Found',
