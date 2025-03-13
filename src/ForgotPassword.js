@@ -27,7 +27,16 @@ function ForgotPassword() {
     setMessage('');
     
     try {
-      const response = await axios.post(`${API_URL}/api/forgot-password`, { email });
+      const response = await axios.post(`${API_URL}/forgot-password`, 
+        { email },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
       
       Swal.fire({
         title: 'Success',
@@ -40,19 +49,24 @@ function ForgotPassword() {
       
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Failed to send reset link';
+      const status = error.response?.status;
+      
+      let alertText = errorMsg;
+      if (status === 401) alertText = 'Unauthorized request';
+      if (status === 404) alertText = 'Email not found';
       
       Swal.fire({
-        title: 'Error',
-        text: errorMsg,
+        title: status ? `Error ${status}` : 'Error',
+        text: alertText,
         icon: 'error'
       });
       
-      setMessage(errorMsg);
+      setMessage(alertText);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
@@ -109,4 +123,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword; 
+export default ForgotPassword;
