@@ -5,6 +5,9 @@ import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
 
+const API_URL = 'https://b76d1a8e5996.ngrok-free.app/';
+// const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app'; // Make sure this matches your backend
+
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -14,7 +17,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app'; // Make sure this matches your backend
+  // const API_URL = 'https://chatroulletexbackend-production-adb8.up.railway.app'; // Make sure this matches your backend
 
   // Validate form before submission
   const validateForm = () => {
@@ -61,11 +64,11 @@ function Register() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`https://chatroulletexbackend-production-adb8.up.railway.app/register`, { 
-        username, 
-        email, 
-        password 
-      });
+      // const response = await axios.post(`https://chatroulletexbackend-production-adb8.up.railway.app/register`, { 
+      //   username, 
+      //   email, 
+      //   password 
+      // });
       
       // Store email for verification
       localStorage.setItem('email', email);

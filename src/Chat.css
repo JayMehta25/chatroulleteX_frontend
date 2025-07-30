@@ -5,7 +5,6 @@
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden; /* optional to prevent scrollbars */
   }
   
   /* The Hyperspeed canvas is placed behind everything

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Stepper, { Step } from "./tutorial"; // Ensure this file exports Stepper & Step
+import StageLight from "./components/StageLight";
+import RippleGrid from "./components/RippleGrid";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const TutorialPage = () => {
@@ -13,9 +15,12 @@ const TutorialPage = () => {
     // Trigger the fade-out animation
     setFadeOut(true);
 
+    // Store the name in localStorage for persistence
+    localStorage.setItem('username', name);
+
     // After the animation ends, navigate to the homepage
     setTimeout(() => {
-      navigate("/Home");
+      navigate("/Home", { state: { name } });
     }, 1000); // 1s delay matches fadeOut animation
   };
 
@@ -43,6 +48,19 @@ const TutorialPage = () => {
           justify-content: center;
           padding: 20px;
           transition: opacity 1s ease; /* fade animation */
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Remove any unwanted icons or elements */
+        .tutorial-container * {
+          background: transparent;
+        }
+
+        /* Ensure no unwanted elements appear */
+        .tutorial-container::before,
+        .tutorial-container::after {
+          display: none !important;
         }
 
         /* Fade-out class triggers an animation to 0 opacity */
@@ -50,14 +68,28 @@ const TutorialPage = () => {
           opacity: 0;
         }
 
-        /* Dark card with white text */
+        /* Transparent card with white text */
         .tutorial-card {
-          background: #111;       /* Dark background */
+          background: transparent;       /* Completely transparent background */
           color: #fff;           /* White text */
           border-radius: 10px;
           padding: 20px;
           max-width: 100%;
           width: 100%;
+          border: none;
+          box-shadow: none;
+        }
+
+        /* Force transparent backgrounds for stepper elements */
+        .step-circle-container,
+        .step-indicator-row,
+        .step-content-default,
+        .step-default,
+        .footer-container,
+        .outer-container {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
         }
 
         /* Headings and paragraphs in white */
@@ -93,6 +125,19 @@ const TutorialPage = () => {
           background: #222;
           color: #fff;
         }
+
+        /* Hide any unwanted icons or elements */
+        .tutorial-container img:not(.tutorial-card img),
+        .tutorial-container svg:not(.step-indicator svg),
+        .tutorial-container .icon,
+        .tutorial-container .emoji {
+          display: none !important;
+        }
+
+        /* Ensure black background everywhere */
+        body, html, #root {
+          background: #000 !important;
+        }
       `}</style>
 
       <div
@@ -100,7 +145,32 @@ const TutorialPage = () => {
           fadeOut ? "fade-out" : ""
         }`}
       >
-        <div className="tutorial-card">
+        {/* RippleGrid Background */}
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          zIndex: 1 
+        }}>
+          <RippleGrid
+            enableRainbow={false}
+            gridColor="#00d8ff"
+            rippleIntensity={0.05}
+            gridSize={20}
+            gridThickness={12}
+            mouseInteraction={true}
+            mouseInteractionRadius={1.2}
+            opacity={0.6}
+            glowIntensity={0.15}
+            fadeDistance={1.8}
+            vignetteStrength={1.5}
+          />
+        </div>
+
+        {/* Tutorial Content */}
+        <div className="tutorial-card" style={{ position: 'relative', zIndex: 2 }}>
           <Stepper
             initialStep={1}
             onStepChange={(step) => {
@@ -111,27 +181,29 @@ const TutorialPage = () => {
             nextButtonText="Next"
           >
             <Step>
-              <h2>Welcome  ChatRouletteX!</h2>
+              <h2>Welcome to Vibester!</h2>
               <p>Check out how to use the app.</p>
             </Step>
             <Step>
-              <h2>Step 2</h2>
+              <h2>Connect with random people!</h2>
               <img src="/step1.png" alt="Step 1" />
-              <p>Here you add your name and generate a code for your room.</p>
+              <p>Connect with random people based on your interests.</p>
             </Step>
             <Step>
-              <h2>Step 3</h2>
+              <h2>Create private rooms</h2>
               <img src="/step2.png" alt="Step 3" />
-              <p>If you already have a room code just add it and join in !!</p>
+              <p>Create private rooms and chat with privacy</p>
+            </Step>
+            <Step>
+              <h2>What should we call you?</h2>
+              <p>Enter your name to get started.</p>
               <input
+                type="text"
+                placeholder="Enter your name..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your name?"
+                className="form-control"
               />
-            </Step>
-            <Step>
-              <h2>Final Step</h2>
-              <p>Create Your Own Chatroom Now !</p>
             </Step>
           </Stepper>
         </div>

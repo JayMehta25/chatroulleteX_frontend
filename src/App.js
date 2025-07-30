@@ -1,44 +1,34 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Features from "./features";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import TutorialPage from "./TutorialPage";
 import Home_page from "./Home";
 import ChatLanding from "./ChatLanding";
 import ChatMain from "./ChatMain";
-import ParticlesPage from "./about";
-import Register from "./Register";
-import EmailVerification from "./EmailVerification";
-import Login from "./Login";
-import Tutorial from './TutorialPage'; // Note: You imported TutorialPage twice with different names
-import ForgotPassword from './ForgotPassword';
-import ResetPassword from './ResetPassword';
-import { Analytics } from "@vercel/analytics/react";
+import InterestChat from "./InterestChat";
+import AboutPage from './AboutPage';
+import UserReviewsPage from './UserReviewsPage';
+import VoiceCall from "./components/VoiceCall";
+import FeaturesGrid from './components/FeaturesGrid';
 
 function App() {
   return (
     <div>
-      {/* Analytics should only be here, outside Routes */}
-      <Analytics />
       <Router>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Navigate to="/Login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-email" element={<EmailVerification />} />
-          
-          {/* Protected routes */}
-          <Route path="/tutorial" element={<Tutorial />} />
+          <Route path="/" element={<Navigate to="/tutorial" />} />
           
           {/* Main Application Routes */}
+          <Route path="/tutorial" element={<TutorialPage />} />
           <Route path="/Home" element={<Home_page />} />
           <Route path="/TutorialPage" element={<TutorialPage />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/ChatLanding" element={<ChatLanding />} />
-          <Route path="/ChatMain" element={<ChatMain />} />
-          <Route path="/about" element={<ParticlesPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/chatlanding" element={<ChatLanding />} />
+          <Route path="/chatmain" element={<ChatMain />} />
+          <Route path="/features" element={<FeaturesGrid />} />
+          <Route path="/interest-chat" element={<InterestChat />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/user-reviews" element={<UserReviewsPage />} />
+          <Route path="/voicecall" element={<VoiceCall />} />
         </Routes>
       </Router>
     </div>
